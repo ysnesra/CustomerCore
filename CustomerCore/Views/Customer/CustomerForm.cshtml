@@ -1,0 +1,91 @@
+﻿@model CustomerCore.ViewModels.CustomerEkleModel
+@{
+    ViewData["Title"] = "CustomerForm"; 
+}
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+<div class="text-center">
+<h1>MüşteriFormu</h1>
+</div>
+
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "Customer", FormMethod.Post, new { id = "kayıtId" }))
+{
+    @Html.ValidationSummary(false)   
+
+    @Html.HiddenFor(m => m.Id)  
+    @Html.AntiForgeryToken()  
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName)
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })                            
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.NameSurname)
+        @Html.TextBoxFor(m => m.NameSurname, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.NameSurname, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+
+        @Html.LabelFor(m => m.Birthdate)
+        @Html.TextBoxFor(m => m.Birthdate, "{0:yyyy-MM-dd}", new { @class = "form-control birth-date", type = "date" })
+        @Html.ValidationMessageFor(x => x.Birthdate,"",new{@style="color:green"})
+    </div>
+
+    @*Formda kullanıcıya oluşturma tarihini sunmayacağız.CreatedDate arka planda tutacağız.*@
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+    </div>
+    <div class="radio ">
+        <label>
+            @Html.RadioButtonFor(m => m.Gender, true) Erkek
+        </label>
+        <label>
+            @Html.RadioButtonFor(m => m.Gender, false) Kadın
+        </label>
+        @Html.ValidationMessageFor(m => m.Gender)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Phone)
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="clearfix" style="margin-top:10px"></div>    
+    <button type="submit" class="btn btn-success">Kaydet</button>
+}
+
+@section Scripts{
+<script>
+    $('#kayıtId').on("submit",function(e){
+        e.preventDefault();
+        var that = $(this);
+        var data = that.serialize();
+        var url = that.attr("action");
+        
+        $.ajax({
+            url:url,
+            data:data,
+            dataType:"json",
+            type:"POST"
+        }).done(function(result){
+            $('#mesaj').html(result);
+        });
+    });
+ 
+</script>
+}

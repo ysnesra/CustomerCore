@@ -1,0 +1,42 @@
+﻿@using CustomerCore.ViewModels
+
+@model List<CategoryModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="text-center">
+<h1>Kategoriler Listesi</h1>
+</div>
+
+<a class="btn btn-success" href="/Category/New" style="margin-bottom:10px">YENİ KATEGORİ</a>
+<br />
+<a class="btn btn-warning" style="background-color:pink" href="@Url.Action("CategoryKayıt","Category")">KAYIT</a>
+
+<table class="table table-bordered" id="tblCategory" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Üst Kategori Idsi</th>
+            <th>Kategori</th>
+            <th>En Alt Kategori Mi</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var category in Model)     
+        {
+            <tr>
+                <td>@category.ParentId</td>
+                <td>@category.Category</td>
+                <td>@(category.IsTheMostChild==true ? "Evet":"Hayır")</td>
+                <td>
+                    <a class="btn btn-primary tblCategoryUpdate" href="@Url.Action("Update","Category",new{id=category.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblCategoryDelete" data-id="@category.Id">SİL</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

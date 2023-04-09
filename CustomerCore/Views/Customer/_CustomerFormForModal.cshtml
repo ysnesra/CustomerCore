@@ -1,0 +1,94 @@
+﻿@model CustomerCore.ViewModels.CustomerEkleModel
+
+
+<div class="text-center">
+    <h1>MüşteriFormu</h1>
+</div>
+
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "Customer", FormMethod.Post, new { id = "kayıtId" }))
+{
+    @Html.ValidationSummary(false)
+    @Html.HiddenFor(m => m.Id)  
+    @Html.AntiForgeryToken()  
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName)
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })                           
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.NameSurname)
+        @Html.TextBoxFor(m => m.NameSurname, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.NameSurname, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+
+        @Html.LabelFor(m => m.Birthdate)
+        @Html.TextBoxFor(m => m.Birthdate, "{0:yyyy-MM-dd}", new { @class = "form-control birth-date", type = "date" })
+        @Html.ValidationMessageFor(x => x.Birthdate,"",new{@style="color:green"})
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+    </div>
+    <div class="radio ">
+        <label>
+            @Html.RadioButtonFor(m => m.Gender, true) Erkek
+        </label>
+        <label>
+            @Html.RadioButtonFor(m => m.Gender, false) Kadın
+        </label>
+        @Html.ValidationMessageFor(m => m.Gender)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Phone)
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+    </div>
+
+  
+    <div class="clearfix" style="margin-top:10px"></div>    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">KAPAT</button>
+        <button type="submit" class="btn btn-primary">KAYDET</button>
+    </div>
+}
+
+@section Scripts{
+    <script>
+    $(function(){
+        $('#kayıtId').on("submit",function(event){
+            event.preventDefault();
+            var that = $(this);
+            var data = that.serialize();
+            var url = that.attr("action");
+
+            $.ajax({
+                url:url,
+                data:data,
+                dataType:"json",
+                type:"POST"
+            }).done(function(result){
+                console.log(result);
+            
+                var option = new Option(result.nameSurname, result.id, true, true);   
+                $('#slct2Customer').append(option).trigger('change');   
+
+                $("#customerModal").modal('hide');   
+
+            });
+        });
+    });
+    </script>
+}

@@ -1,0 +1,46 @@
+﻿
+@using CustomerCore.ViewModels
+
+@model List<OrderDetailsModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="text-center">
+<h1>Sipariş Detayları</h1>
+</div>
+
+<a class="btn btn-success" href="/OrderDetail/New" style="margin-bottom:10px">YENİ SİPARİŞ</a>
+<br />
+
+<table class="table table-bordered" id="tblOrderDetails" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Sipariş Id</th>
+            <th>Ürün Id</th>
+            <th>Miktar</th>
+            <th>Birim Fiyat</th>
+            <th>Satış Fiyatı</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var detail in Model)     
+        {
+            <tr>
+                <td>@detail.OrderId</td>
+                <td>@detail.ItemId</td>
+                <td>@detail.Amount</td>
+                <td>@detail.UnitPrice</td>
+                <td>@detail.SalePrice</td>
+                <td>
+                    <a class="btn btn-primary OrderDetailsUpdate" href="@Url.Action("Update","OrderDetail",new{id=detail.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblOrderDetailsDelete" data-id="@detail.Id">SİL</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

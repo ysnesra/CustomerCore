@@ -1,0 +1,78 @@
+﻿@using CustomerCore.ViewModels
+
+@model List<CustomerModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="text-center">
+    <h1>Müşteriler Listesi</h1>
+</div>
+
+<a class="btn btn-success" href="/Customer/New" style="margin-bottom:10px">YENİ MÜŞTERİ</a>
+<br />
+<table class="table table-bordered" id="tblCustomer" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Kullanıcı Adı</th>
+            <th>Şifre</th>
+            <th>Ad-Soyad</th>
+            <th>Doğum Günü</th>
+            <th>Oluşturulma Tarihi</th>
+            <th>Email</th>
+            <th>Cinsiyet</th>
+            <th>Telefon</th>
+            <th>Adres</th>
+            <th>Güncelle</th>
+            <th>Sil</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var customer in Model)    
+        {
+            <tr>
+                <td>@customer.UserName</td>
+                <td>@customer.Password</td>
+                <td>@customer.NameSurname</td>
+                <td>@customer.Birthdate.ToString("dd MMMM yyyy")</td>
+                <td>@customer.CreatedDate.ToString("dd MMMM yyyy")</td>
+                <td>@customer.Email</td>
+                <td>@(customer.Gender==true ? "Erkek":"Kadın")</td>
+                <td>@customer.Phone</td>
+                <td>
+                    <a class="btn btn-primary addresslist" href="javascript:void(0)" data-address="@Url.Action("AddressList","Customer",new{id=customer.Id})">ADRES</a>
+                </td>
+                <td>
+                    <a class="btn btn-primary tblCustomUpdate" href="@Url.Action("Update","Customer",new{id=customer.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblCustomDelete" data-id="@customer.Id">SİL</a>  
+                </td>                                                                        
+            </tr>
+        }
+    </tbody>
+
+</table>
+<div id="AdresleringösterileceğiListeKutusu"></div>
+@section scripts{
+              
+<script>
+
+    $(".addresslist").on("click",function(){
+
+          var that = $(this);
+          var url = that.data("address");
+          alert(url);
+          console.log(url);
+
+          $.ajax({
+              url:url,
+              type:"Get"
+          }).done(function(sonuc){
+              $('#AdresleringösterileceğiListeKutusu').html(sonuc);
+          });
+      });
+</script>
+
+        }

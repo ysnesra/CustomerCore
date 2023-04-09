@@ -1,0 +1,96 @@
+﻿@model CustomerCore.ViewModels.ItemFormViewModel
+@{
+    ViewData["Title"] = "ItemForm";
+}
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="text-center">
+    <h1>Ürün Düzenleme Formu</h1>
+</div>
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "Item", FormMethod.Post, new { id = "ProducstFrom", enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(false)
+    @Html.HiddenFor(m => m.ItmId)  
+    @Html.AntiForgeryToken() 
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmItemCode)
+        @Html.TextBoxFor(m => m.ItmItemCode, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmItemCode, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmItem)
+        @Html.TextBoxFor(m => m.ItmItem, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmItem, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmUnitPrice)
+        @Html.TextBoxFor(m => m.ItmUnitPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmUnitPrice, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmCategoryId)
+        @Html.DropDownListFor(m => m.ItmCategoryId, new SelectList(Model.CategoryVM, "Id", "Category"), "Kategori Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmCategoryId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmVatRateId)
+        @Html.DropDownListFor(m => m.ItmVatRateId, new SelectList(Model.VatRateVM, "Id", "VatRate"), "Kdv Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmVatRateId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmBrand)
+        @Html.TextBoxFor(m => m.ItmBrand, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmBrand, "", new { @class = "text-danger" })
+
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItmAmount)
+        @Html.TextBoxFor(m => m.ItmAmount, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItmAmount, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+
+        @Html.TextBox("ItmSelectFiles" ,"null", new { @class = "form-control-file", type="file", id="fileupload",multiple="multiple"})
+    </div>
+ 
+    <div class="clearfix" style="margin-top:10px"></div>   
+    <button type="submit" class="btn btn-success">Kaydet</button>
+}
+
+
+
+@section Scripts{
+<script>
+     
+        $("#ProducstFrom").on('submit',function(e){
+            e.preventDefault();
+            var fileload=$("#fileupload");
+            var that = $(this);
+            var formData = new FormData(this);
+            var url = that.attr("action");
+
+            $.ajax({
+                url:url,
+                contentType:false,
+                processData: false,
+                data:formData,
+                dataType:"json",
+                type:"POST"
+
+            }).done(function(result){
+
+                $('#mesaj').html(result);
+            });
+        });
+
+</script>
+
+}
+

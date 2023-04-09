@@ -1,0 +1,30 @@
+﻿@using CustomerCore.ViewModels
+@{
+}
+@model IEnumerable<CustomerCore.Context.OrderDetails>
+
+<h4>Sipariş Detay Listesi</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Sipariş Id</th>
+            <th>Ürün Id</th>
+            <th>Miktar</th>
+            <th>Birim Fiyat</th>
+            <th>Satış Fiyatı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model)
+        {
+            <tr>
+                <td>@detail.OrderId</td>
+                <td>@detail.ItemId</td>
+                <td>@detail.Amount</td>
+                <td>@detail.UnitPrice</td>
+                <td>@detail.SalePrice</td>
+            </tr>
+        }
+    </tbody>
+</table>

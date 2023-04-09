@@ -1,0 +1,87 @@
+﻿@using HtmlHelpers.BeginCollectionItemCore
+@using CustomerCore.ViewModels.OrderModels
+@using static CustomerCore.ViewModels.OrderModels.EditOrderOrderDetailsViewModel
+@model EditOrderOrderDetailsViewModel
+
+@{
+    ViewBag.Title = "Yeni";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+<h1>Sipariş Güncellerken Aynı sayfada Sipariş Detayıda Ekle/Güncelle/Sil</h1>
+
+
+<div id="SiparişDetayıDüzenlemeiçinMesaj"></div>
+
+@using (Html.BeginForm("Record", "Order", FormMethod.Post, new { @id = "editOrderKayitForm" }))
+{
+    @Html.HiddenFor(m => m.OrderMCustomerId)
+    @Html.HiddenFor(m => m.OrderMAddressId)
+    @Html.HiddenFor(m => m.OrderMId)  
+    @Html.AntiForgeryToken()
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrderMDate)
+        @Html.TextBoxFor(m => m.OrderMDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })   
+        @Html.ValidationMessageFor(m => m.OrderMDate)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrderMStatus)
+        @Html.DropDownListFor(m => m.OrderMStatus, Html.GetEnumSelectList<StatusEnum>(), "Sipariş Durumunu seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.OrderMStatus, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="clearfix" style="margin-top:10px"></div>    
+    <button type="submit" class="btn btn-success">Kaydet</button>
+    <br />
+    <br />
+    <a class="btn btn-primary forkayıt" type="submit" href="javascript:void(0)" data-kayfor="@Url.Action("OrderDetailList","Order")">Sipariş Detayı Gir</a>
+
+    <div id="orderDetailsformiçinayrılanalan">
+        @foreach (var item in Model.OrderDetailsMModels) 
+        {                                                
+            @Html.PartialAsync("_EditOrderOrderDetailsKayıt",item).Result
+        }
+    </div>
+}
+<br />
+
+@*Sipariş Detayı Gir butonu için*@
+@section Scripts{
+<script>
+    $(document).ready(function () {
+      $('.forkayıt').on("click",function(){                                                                                              
+          var that = $(this);                                     
+          var url = that.attr("data-kayfor");        
+
+          $.ajax({
+              url:url,                                                                                              
+              type:"GET"                                                                                                     
+          }).done(function(result){
+              $('#orderDetailsformiçinayrılanalan').append(result);      
+          });
+      });
+       });
+</script>
+
+<script>
+     //1.YOL
+    $('#editOrderKayitForm').on("submit",function(e){   
+        e.preventDefault();
+        var that = $(this);
+        var data = that.serialize();              
+        var url = that.attr("action");         
+
+        $.ajax({
+            url:url,
+            data:data,
+            dataType:"json",
+            type:"POST"
+        }).done(function(result){
+            $('#SiparişDetayıDüzenlemeiçinMesaj').html(result);    
+        });
+    });
+</script>
+}

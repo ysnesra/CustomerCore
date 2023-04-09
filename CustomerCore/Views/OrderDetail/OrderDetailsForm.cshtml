@@ -1,0 +1,74 @@
+﻿@model CustomerCore.ViewModels.OrderDetailsFormViewModel
+@{
+    ViewData["Title"] = "OrderDetailsForm"; 
+}
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="text-center">
+<h1>Sipariş Detayları Düzenleme Formu</h1>
+</div>
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "OrderDetail", FormMethod.Post, new { id = "OrderDetailKayıtId" }))
+{
+    @Html.ValidationSummary(false)  
+   
+
+    @Html.HiddenFor(m => m.Id)   
+    @Html.AntiForgeryToken()   
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.OrderId)
+        @Html.DropDownListFor(m => m.OrderId, new SelectList(Model.OrderVM, "Id", "Status "), "Sipariş Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.OrderId, "", new { @class = "text-danger" })                         
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ItemId)
+        @Html.DropDownListFor(m => m.ItemId, new SelectList(Model.OrderVM, "Id", "Item"), "Ürün Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ItemId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Amount)
+        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })
+    </div>
+        <div class="form-group">
+        @Html.LabelFor(m => m.UnitPrice)
+        @Html.TextBoxFor(m => m.UnitPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.UnitPrice)
+    </div>
+      <div class="form-group">
+        @Html.LabelFor(m => m.SalePrice)
+        @Html.TextBoxFor(m => m.SalePrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.SalePrice, "", new { @class = "text-danger" })
+    </div>
+      
+
+    <div class="clearfix" style="margin-top:10px"></div>    
+    <button type="submit" class="btn btn-success">Kaydet</button>
+}
+
+@section Scripts{
+<script>
+    $('#OrderDetailKayıtId').on("submit",function(e){
+        e.preventDefault();
+        var that = $(this);
+        var data = that.serialize();
+        var url = that.attr("action");
+     
+        $.ajax({
+            url:url,
+            data:data,
+            dataType:"json",
+            type:"POST"
+        }).done(function(result){
+            $('#mesaj').html(result);
+        });
+    });
+ 
+</script>
+}
+

@@ -1,0 +1,83 @@
+﻿@using CustomerCore.ViewModels
+
+@model List<ItemModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="text-center">
+    <h1>Ürünler Listesi</h1>
+</div>
+
+<a class="btn btn-success" href="/Item/New" style="margin-bottom:10px">YENİ ÜRÜN</a>
+<br />
+
+<table class="table table-bordered" id="tblItem" style="margin-top:20px ; table-layout: fixed">  
+    <thead>
+        <tr>
+            <th>Fotograf </th>          
+            <th>Ürün Kodu</th>
+            <th>Ürün</th>
+            <th>Birim Fiyat</th>
+            <th>Kategori Id</th>
+            <th>Kdv Id</th>
+            <th>Marka</th>
+            <th>Miktar</th>
+            <th>Güncelle</th>
+            <th>Sil</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var imageContainerClassName = "imagebox_" + item.Id;
+            <tr>
+                <td>
+                    <div class="owl-carousel owl-theme @imageContainerClassName"> 
+                        @foreach (var itempicture in item.PhotoFiles)  
+                        {
+                            <div class="item">
+                                <img src="~/uploads/products/@itempicture" style="max-width:80px;"/> 
+                            </div>
+                        }
+                    </div>
+
+                </td>
+                <td>@item.ItemCode</td>
+                <td>@item.Item</td>
+                <td>@item.UnitPrice</td>
+                <td>@item.CategoryId</td>
+                <td>@item.VatRateId</td>
+                <td>@item.Brand</td>
+                <td>@item.Amount</td>
+                <td>
+                    <a class="btn btn-primary" tblItemUpdate" href="@Url.Action("Update","Item",new{id=item.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblItemDelete" data-id="@item.Id">SİL</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+<script>
+    $(document).ready(function() {     
+
+        @foreach(var item in Model){
+            var imageContainerClassName = "imagebox_" + item.Id;
+            <text>
+            $(".@imageContainerClassName").owlCarousel({
+                items: 1,                  
+                itemsDesktop: [100, 1],
+                itemsDesktopSmall: [90, 1],
+                itemsTablet: [60, 1],
+             });
+
+            </text>
+        }
+       });
+
+</script>
+}

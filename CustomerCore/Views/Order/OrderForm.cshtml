@@ -1,0 +1,303 @@
+﻿@using static CustomerCore.ViewModels.OrderModels.EditOrderOrderDetailsViewModel
+@model CustomerCore.ViewModels.OrderModels.OrderFormViewModel
+
+@{
+    ViewData["Title"] = "OrderForm";
+}
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="text-center">
+    <h1>Sipariş Düzenleme Formu</h1>
+</div>
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "Order", FormMethod.Post, new { id = "OrderKayıtId" }))
+{
+    @Html.ValidationSummary(false)
+    @Html.HiddenFor(m => m.Id)   
+    @Html.AntiForgeryToken()  
+
+
+    <div class="form-group col-lg-12">
+        <div class="row">
+            @Html.LabelFor(m => m.CustomerId)
+            <div class="input-group mb-3">
+                <select class="form-control" id="slct2Customer" typeof="hidden" data-Edit="CustomerId">
+                    <option value="-1"> Seçiniz </option>
+                </select>
+
+                @Html.ValidationMessageFor(m => m.CustomerId, "", new { @class = "text-danger" })
+
+                <div class="input-group-append">
+                    <span data-toggle="modal" data-target="#customerModal" id="customerAdd"  style="cursor:pointer"><img src="https://w7.pngwing.com/pngs/730/99/png-transparent-mathematics-mathematical-notation-division-equals-sign-plus-and-minus-signs-plus-cross-sign-multiplication-thumbnail.png" width="35" height="35"></span>
+                </div>
+            </div>
+        </div>
+
+         <div class="row">
+        @Html.LabelFor(m => m.AddressId)
+        <div class="input-group mb-3">
+            <select class="form-control" id="slct2Address">
+                <option value="-1"> Adres Seçiniz... </option>
+            </select>
+
+            @Html.ValidationMessageFor(m => m.AddressId, "", new { @class = "text-danger" })     
+            <div class="input-group-append">
+                <span data-toggle="modal" data-target="#addressModal" id="addressAdd" style="cursor:pointer"><img src="https://w7.pngwing.com/pngs/730/99/png-transparent-mathematics-mathematical-notation-division-equals-sign-plus-and-minus-signs-plus-cross-sign-multiplication-thumbnail.png" width="35" height="35" width="35" height="35"></span>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Date)
+        @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })   
+        @Html.ValidationMessageFor(m => m.Date)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Status)
+        @Html.DropDownListFor(m => m.Status, Html.GetEnumSelectList<StatusEnum>(), "Sipariş Durumunu seçiniz", new { @class = "form-control" }) 
+        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+    </div>
+   
+
+    <div class="clearfix" style="margin-top:10px"></div>     
+    <button type="submit" class="btn btn-success">Kaydet</button>
+
+}
+
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customermodals"  aria-hidden="true" data-backdrop="static">  
+    <div class="modal-dialog modal-dialog-scrollable" role="document"  >  
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customermodals">Müşteri Kaydı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressmodals" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressmodals">Adres Kaydı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body2">
+               
+
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts{
+<script>
+            $('#OrderKayıtId').on("submit",function(e){
+                e.preventDefault();
+                var that = $(this);
+                var data = that.serialize();
+                var url = that.attr("action");
+
+                $.ajax({
+                    url:url,
+                    data:data,
+                    dataType:"json",
+                    type:"POST"
+                }).done(function(result){
+                    $('#mesaj').html(result);
+                });
+            });
+
+
+          GetCustomer();
+
+      
+         $('#slct2Customer').select2({
+
+             maximumSelectionLength: 2,
+             placeholder:"Müşteri ismini giriniz...", 
+             allowClear:true,
+         });
+
+         $('#slct2Customer').on('change', function() {
+            alert($(this).val());   
+            var custId = $('#slct2Customer').val();    
+
+               $.ajax({
+               url:"/Customer/GetAddressList",                  
+               data: {id: custId}, 
+               type: 'POST',
+               dataType: 'Json',
+               success:function(data){
+                     console.log(data);
+                     $('#slct2Address').empty();
+                     for(var i=0; i<data.length; i++){    
+                          $('#slct2Address').append("<Option value='"
+                          + data[i].id + "'>" 
+                          + data[i].addressText + "</Option>");
+                     }
+                      console.log(data);
+                  }
+               });
+            });
+
+
+       
+         $('#slct2Customer').on('change', function() {
+            alert($(this).val());  
+            var custId = $('#slct2Customer').val();    /
+
+               $.ajax({
+               url:"/Customer/GetAddressList",                  
+               data: {id: custId}, 
+               type: 'POST',
+               dataType: 'Json',
+               success:function(data){
+                     console.log(data);
+                     $('#slct2Address').empty();
+                     for(var i=0; i<data.length; i++){     
+                          $('#slct2Address').append("<Option value='"
+                          + data[i].id + "'>" 
+                          + data[i].addressText + "</Option>");
+                     }
+                      console.log(data);
+                  }
+               });
+            });
+
+
+       
+         $('#customerModal').on('shown.bs.modal', function () {
+             console.log("MODAL AÇILDI"); 
+             var url='@Url.Action("NewModal", "Customer")';
+             var placeModalDiv=$('.modal-body');
+             $.get(url).done(function(data){
+                 placeModalDiv.html(data);
+
+                 $('form',placeModalDiv).on("submit",function(event){
+                 event.preventDefault();
+                 var that = $(this);
+                 var data = that.serialize();
+                 var url = '@Url.Action("RecordModal", "Customer")';
+
+                 $.ajax({
+                     url:url,
+                     data:data,
+                     dataType:"json",
+                     type:"POST"
+                 }).done(function(result){
+                     console.log(result);
+                   
+                      var option = new Option(result.nameSurname, result.id, true, true);   
+                       $('#slct2Customer').append(option).trigger('change');   
+
+                       $("#customerModal").modal('hide');  
+
+                 });
+               });
+            });
+         });
+    GetAddress();
+
+    console.log("Addressfonk girdi");
+     $('#slct2Address').select2({
+
+          maximumSelectionLength: 2,
+          placeholder:"Adresinizi giriniz...", 
+          //theme:"bootstrap4",
+          allowClear:true,
+         });
+
+
+      $('#addressModal').on('shown.bs.modal', function () {
+         console.log("Customer MODAL AÇILDI");
+           
+
+         var url='@Url.Action("NewModalAddress", "Customer")';
+         var placeModalDiv=$('.modal-body2');
+        $.get(url).done(function(data){
+            console.log(data);
+           placeModalDiv.html(data);
+        
+      $('#kayıtId').on("submit",function(event){
+         event.preventDefault();
+         var that = $(this);
+         var data = that.serialize();
+         var url = '@Url.Action("RecordModalAddress", "Customer")';
+           
+       $.ajax({
+          url:url,
+          data:data,
+          dataType:"json",
+          type:"POST"
+       }).done(function(result){
+          console.log(result);
+          return {
+            id: $('#slct2Customer').val()
+           
+          }
+       var option = new Option(result.addressText, result.id, true, true);   
+       $('#slct2Address').append(option).trigger('change');   
+
+       $("#addressModal").modal('hide'); 
+
+                 });
+               });
+            });
+         });
+
+
+         function GetCustomer()
+         {
+             $.ajax({
+                 url:"/Customer/GetCustomerList",
+
+                 dataType:"json",
+                 type:"POST"
+             }).done(function(result){
+
+             $.each(result, function(key, value) { 
+
+                 $('#slct2Customer')
+                 .append($("<option></option>")
+                     .attr("value", value.id)
+                     .text(value.nameSurname));
+                 });
+             });
+          }
+
+            function GetAddress()
+          {
+             $.ajax({
+                 url:"/Customer/GetAddressList",
+
+                 dataType:"json",
+                 type:"POST"
+             }).done(function(result){
+             
+             $.each(result, function(key, value) { 
+
+                console.log(value.addressText)
+                 $('#slct2Address')
+                 .append($("<option></option>")
+                     .attr("value", value.id)
+                     .text(value.addressText));
+                 });
+             });
+          }
+
+</script>
+}

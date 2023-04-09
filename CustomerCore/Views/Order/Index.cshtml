@@ -1,0 +1,90 @@
+﻿@using CustomerCore.ViewModels
+
+
+@model List<OrderModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="text-center">
+    <h1>Sipariş Listesi</h1>
+</div>
+
+<a class="btn btn-success" href="/Order/New" style="margin-bottom:10px">YENİ SİPARİŞ</a>
+<br />
+
+<table class="table table-bordered" id="tblOrder" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Müşteri Id</th>
+            <th>Sipariş Tarihi</th>
+            <th>Sipariş Durumu</th>
+            <th>Adres Id</th>
+            <th>Güncelle</th>
+            <th>Sil</th>
+            <th>Sipariş Detayı Göster</th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var orderi in Model)
+        {
+            var orderDetailClassName = "orderdetail_" + orderi.Id;
+            <tr>
+
+                <td>@orderi.CustomerId</td>
+                <td>@orderi.Date.Value.ToString("dd MMMM yyyy")</td>
+                <td>@Html.DisplayFor(m=>orderi.Status)</td>         
+                <td>@orderi.AddressId</td>
+                <td>
+                    <a class="btn btn-primary tblOrderUpdate" href="@Url.Action("Update","Order",new{id=orderi.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblOrderDelete" data-id="@orderi.Id">SİL</a>
+                </td>
+                <td>
+                    <a class="btn btn-warning OrderOrderDetailShow" href="javascript:void(0)" data-orderid="@orderi.Id" data-datadetay="@Url.Action("OrderDetailList","Order",new{id=orderi.Id})">SİPARİŞ DETAY GÖSTER</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <div class="@orderDetailClassName" style="display: none;">
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts{
+<script>
+                                              
+    $(".OrderOrderDetailShow").on("click",function(){   
+
+          var that = $(this);
+          var url = that.data("datadetay");    
+          var orderDetailClassName = ".orderdetail_" + idData;   
+                                                                    
+        if ( !$.trim( $(orderDetailClassName).html() ).length  )   
+        {
+            $.ajax({
+              url:url,
+              type:"Get"
+          }).done(function(result){
+              $(orderDetailClassName).html(result) ;
+            $(orderDetailClassName).show();  
+          });
+
+        }else{
+
+        $(orderDetailClassName).toggle();
+
+         }
+
+      });
+
+</script>
+}

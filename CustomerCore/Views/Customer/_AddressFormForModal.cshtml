@@ -1,0 +1,126 @@
+﻿@model CustomerCore.ViewModels.AddressModels.AddressFormViewModel
+@{
+    ViewData["Title"] = "AddressForm"; 
+}
+
+<div class="text-center">
+<h3>Adres Düzenleme Formu</h3>
+</div>
+
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("RecordModalAddress", "Customer", FormMethod.Post, new { id = "AddressKayıtId" }))
+{
+    @Html.ValidationSummary(false) 
+   
+
+    @Html.HiddenFor(m => m.Id)  
+    @Html.HiddenFor(m => m.CustomerId)  
+    @Html.AntiForgeryToken()    
+   
+      <div class="form-group">
+        @Html.LabelFor(m => m.CountryId)
+        @Html.DropDownListFor(m => m.CountryId, new SelectList(Model.CountryVM, "Id", "Country"), "Ülke Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CountryId)
+    </div>
+      <div class="form-group">
+        @Html.LabelFor(m => m.CityId)
+        @Html.DropDownListFor(m => m.CityId, new SelectList(Model.CityVM, "Id", "City"), "Şehir Seçiniz", new { @class = "form-control" })   
+        @Html.ValidationMessageFor(m => m.CityId)
+    </div>
+     <div class="form-group">
+        @Html.LabelFor(m => m.TownId)
+        @Html.DropDownListFor(m => m.TownId, new SelectList(Model.TownVM, "Id", "Town"), "Semt Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.TownId)
+    </div>
+     <div class="form-group">
+        @Html.LabelFor(m => m.DistrictId)
+        @Html.DropDownListFor(m => m.DistrictId, new SelectList(Model.DistrictVM, "Id", "District"), "İlçe Seçiniz", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.DistrictId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.PostalCode)
+        @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.AddressText)
+        @Html.TextBoxFor(m => m.AddressText, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.AddressText, "", new { @class = "text-danger" })
+    </div>
+
+    
+    <div class="clearfix" style="margin-top:10px"></div>  
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">KAPAT</button>
+        <button type="submit" class="btn btn-primary">KAYDET</button>
+    </div>
+
+}
+@section Scripts{
+<script>
+       GetCountry();   
+         function GetCustomer()
+         {
+             $.ajax({
+                 url:"/Customer/GetCustomerList",
+
+                 dataType:"json",
+                 type:"POST"
+             }).done(function(result){
+
+             $.each(result, function(key, value) { 
+                 $('#slct2Customer')
+                 .append($("<option></option>")
+                     .attr("value", value.id)
+                     .text(value.nameSurname));
+                 });
+             });
+          }
+        function GetCountry()
+         {
+             
+             $.ajax({
+                 url:"/Customer/GetCountryList",
+
+                 dataType:"json",
+                 type:"POST"
+             }).done(function(result){
+
+             $.each(result, function(key, value) { 
+                 $('#Idcountry')
+                 .append($("<option></option>")
+                     .attr("value", value.id)
+                     .text(value.country));
+                 });
+             });
+          }
+                  
+    $('#AddressKayıtId').on("submit",function(event){
+        console.log("naber");
+        event.preventDefault();
+        var that = $(this);
+        var data = that.serialize();
+        var url = that.attr("action");
+
+        $.ajax({
+            url:url,
+            data:data,
+            dataType:"json",
+            type:"POST"
+        }).done(function(result){
+            console.log(result);
+           
+            var option = new Option(result.nameSurname, result.id, true, true); 
+            $('#slct2Address').append(option).trigger('change');    
+
+            $("#spidermodal").modal('hide');   
+
+        });
+    });
+</script>
+}
+
+ 
+

@@ -1,0 +1,50 @@
+﻿@using CustomerCore.ViewModels.AddressModels
+
+@model List<AddressModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="text-center">
+<h1>Adres Listesi</h1>
+</div>
+
+<a class="btn btn-success" href="/Address/New" style="margin-bottom:10px">YENİ ADRES</a>
+<br />
+<a class="btn btn-warning" style="background-color:pink" href="@Url.Action("AdresKayıt","Address")">KAYIT</a>
+
+<table class="table table-bordered" id="tblAddress" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Müşteri Idsi</th>
+            <th>Ülke Idsi</th>
+            <th>Şehir Idsi</th>
+            <th>Semt Idsi</th>
+            <th>İlçe Idsi</th>
+            <th>Posta Kodu</th>
+            <th>Adres Metni</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var addres in Model)     
+        {
+            <tr>
+                <td>@addres.CustomerId</td>
+                <td>@addres.CountryId</td>
+                <td>@addres.CityId</td>
+                <td>@addres.TownId</td>
+                <td>@addres.DistrictId</td>
+                <td>@addres.PostalCode</td>
+                <td>@addres.AddressText</td>              
+                <td>
+                    <a class="btn btn-primary AddressUpdate" href="@Url.Action("Update","Address",new{id=addres.Id})">GÜNCELLE</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger tblAddressDelete" data-id="@addres.Id">SİL</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

@@ -1,0 +1,68 @@
+﻿@model CustomerCore.ViewModels.CategoryEkleModel
+@{
+    ViewData["Title"] = "CategoryForm"; 
+}
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="text-center">
+<h1>Kategori Formu</h1>
+</div>
+<div id="mesaj"></div>
+
+@using (Html.BeginForm("Record", "Category", FormMethod.Post, new { id = "kayıtId" }))
+{
+    @Html.ValidationSummary(false)   
+   
+
+    @Html.HiddenFor(m => m.Id)   
+    @Html.AntiForgeryToken()   
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Category)
+        @Html.TextBoxFor(m => m.Category, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-danger" })                            
+    </div>
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.ParentId)
+        @Html.DropDownListFor(m => m.ParentId, new SelectList("Id", "Category"), "Sipariş Seçiniz", new { @class = "form-control selectFiter" })
+        @Html.ValidationMessageFor(m => m.ParentId, "", new { @class = "text-danger" })                            
+    </div>
+    <div class="radio ">
+          @Html.LabelFor(m => m.IsTheMostChild)
+          <br />
+        <label>
+            @Html.RadioButtonFor(m => m.IsTheMostChild, true) Evet
+        </label>
+        <label>
+            @Html.RadioButtonFor(m => m.IsTheMostChild, false) Hayır
+        </label>
+        @Html.ValidationMessageFor(m => m.IsTheMostChild)
+    </div>
+   
+    <div class="clearfix" style="margin-top:10px"></div>    
+    <button type="submit" class="btn btn-success">Kaydet</button>
+}
+@section Scripts{
+<script>
+    $('#kayıtId').on("submit",function(e){
+        e.preventDefault();
+        var that = $(this);
+        var data = that.serialize();
+        var url = that.attr("action");
+       
+        $.ajax({
+            url:url,
+            data:data,
+            dataType:"json",
+            type:"POST"
+        }).done(function(result){
+            $('#mesaj').html(result);
+        });
+    });
+ 
+</script>
+}
+
